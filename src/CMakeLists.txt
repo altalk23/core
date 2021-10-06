@@ -13,4 +13,7 @@ elseif(WIN32)
 else()
 endif()
 set_property(TARGET lilac_hook PROPERTY CXX_STANDARD 17)
-target_include_directories(lilac_hook PRIVATE "${CMAKE_SOURCE_DIR}/include")
+target_include_directories(lilac_hook PRIVATE 
+    "${CMAKE_CURRENT_LIST_DIR}/../include"
+    "${Cacao_SOURCE_DIR}/Compat"
+)
