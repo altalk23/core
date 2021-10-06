@@ -4,10 +4,9 @@
 /* platform template for platforms, lol
 * in a different header to avoid cyclic dependencies
 */
-#include <cstddef>
-#include <iostream>
-
 #include "lilac_hook.hpp"
+
+#include <cstddef>
 
 namespace lilac::impl {
 	template<typename T>
