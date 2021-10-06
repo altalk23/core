@@ -36,16 +36,16 @@ namespace lilac::impl {
 
 	private:
 		// static inline std::map<const void*, HookChain> all_hooks;
-        static inline std::map<const void*, HookChain>& all_hooks() {
-            static auto ret = new std::map<const void*, HookChain>();
-            return *ret;
-        }
+		static inline std::map<const void*, HookChain>& all_hooks() {
+			static auto ret = new std::map<const void*, HookChain>();
+			return *ret;
+		}
 
 		// static inline std::map<const void*, CallFrame> all_frames;
-        static inline std::map<const void*, CallFrame>& all_frames() {
-            static auto ret = new std::map<const void*, CallFrame>();
-            return *ret;
-        }
+		static inline std::map<const void*, CallFrame>& all_frames() {
+			static auto ret = new std::map<const void*, CallFrame>();
+			return *ret;
+		}
 
 	private:
 		/* these don't check char buffer bounds. it should have sizeof(trap) size.
