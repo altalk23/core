@@ -12,14 +12,15 @@ typedef _Bool bool;
 #endif
 
 #if defined(_WIN32)
-    // idk maybe clean platform stuff more
-    #define LILAC_CALL __stdcall
+	// idk maybe clean platform stuff more
+	#define LILAC_CALL __stdcall
+	#define WEAK __stdcall __declspec(weak)
 #elif defined(__APPLE__)
-    #define LILAC_CALL 
-
+	#define LILAC_CALL 
+	#define WEAK __attribute__((weak))
 #else
-    // everything else is unsupported rn LOL
-    #error Currently unsupported platform.
+	// everything else is unsupported rn LOL
+	#error Currently unsupported platform.
 #endif
 
 

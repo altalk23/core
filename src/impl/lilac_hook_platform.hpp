@@ -5,6 +5,9 @@
 * in a different header to avoid cyclic dependencies
 */
 #include <cstddef>
+#include <iostream>
+
+#include "lilac_hook.hpp"
 
 namespace lilac::impl {
 	template<typename T>
@@ -22,8 +25,12 @@ namespace lilac::impl {
 			return T::write_memory(to, from, size);
 		}
 
+		WEAK static inline bool initialized = false;
+
 		static bool initialize() {
-			return T::initialize();
+			if (initialized) return true;
+			bool ret = T::initialize();
+			return initialized = ret;
 		}
 
 		static const inline bool init = initialize();
