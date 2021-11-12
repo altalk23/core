@@ -13,4 +13,4 @@ else()
 endif()
 
 target_include_directories(lilac_hook_test PRIVATE
-	"${CMAKE_SOURCE_DIR}/include")
+	"${CMAKE_CURRENT_LIST_DIR}/../include")

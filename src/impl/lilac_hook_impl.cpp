@@ -25,19 +25,19 @@ void HookManager::remove_trap(const void* address, char buffer[]) {
 }
 
 bool HookManager::find_in_hooks(Exception& info) {
-	auto pair = all_hooks.find(info.address);
-	if (pair != all_hooks.end()) {
+	auto pair = all_hooks().find(info.address);
+	if (pair != all_hooks().end()) {
 		auto& hook = pair->second;
 
 		// add a frame hook for cleanup
-		auto frame_pair = all_frames.find(info.return_address);
-		if (frame_pair != all_frames.end()) {
+		auto frame_pair = all_frames().find(info.return_address);
+		if (frame_pair != all_frames().end()) {
 			if (frame_pair->second.parent != &hook) {
 				// tail call in another HookChain, we need to clean up
 			}
 		}
 		else {
-			auto result = all_frames.insert({ info.return_address, CallFrame() });
+			auto result = all_frames().insert({ info.return_address, CallFrame() });
 			if (!result.second) {
 				// insertion failed
 				return false;
@@ -74,8 +74,8 @@ bool HookManager::find_in_hooks(Exception& info) {
 }
 
 bool HookManager::find_in_frames(Exception& info) {
-	auto pair = all_frames.find(info.address);
-	if (pair != all_frames.end()) {
+	auto pair = all_frames().find(info.address);
+	if (pair != all_frames().end()) {
 		HookChain& hook = *pair->second.parent;
 
 		// specialization for last frame: need to replace trap
@@ -97,7 +97,7 @@ bool HookManager::find_in_frames(Exception& info) {
 		hook.frames.resize(hook.frames.size() - count);
 
 		remove_trap(info.address, pair->second.original_bytes);
-		all_frames.erase(pair);
+		all_frames().erase(pair);
 
 		return true;
 	}
@@ -111,7 +111,7 @@ bool HookManager::handler(Exception& info) {
 }
 
 HookHandle HookManager::add_hook(const void* address, const void* detour) {
-	auto& hook = all_hooks[address];
+	auto& hook = all_hooks()[address];
 	
 	auto& detours = hook.detours;
 	auto i = std::find(detours.begin(), detours.end(), detour);
@@ -136,8 +136,8 @@ HookHandle HookManager::add_hook(const void* address, const void* detour) {
 
 bool HookManager::remove_hook(HookHandle handle) {
 	auto& real = *static_cast<const Handle*>(handle);
-	auto pair = all_hooks.find(real.address);
-	if (pair != all_hooks.end()) {
+	auto pair = all_hooks().find(real.address);
+	if (pair != all_hooks().end()) {
 		auto& detours = pair->second.detours;
 		auto detour = std::find(detours.begin(), detours.end(), real.detour);
 		if (detour != detours.end()) {

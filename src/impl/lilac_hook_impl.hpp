@@ -1,8 +1,6 @@
 #ifndef __LILAC_HOOK_IMPL_HPP__
 #define __LILAC_HOOK_IMPL_HPP__
 
-#include "lilac_hook.hpp"
-
 #include <vector>
 #include <map>
 
@@ -35,8 +33,25 @@ namespace lilac::impl {
 
 
 	private:
-		static inline std::map<const void*, HookChain> all_hooks = {};
-		static inline std::map<const void*, CallFrame> all_frames = {};
+		/**
+		 * Cacao changes:
+		 * Since camila doesn't like to dynamically link anything,
+		 * this system uses weak symbols to emulate "sharedness"
+		 * 
+		 * Is it a good practice? No
+		 * Does it work? Yes
+		 * 
+		 * So I don't see much problem
+		 */
+		WEAK static inline auto& all_hooks() {
+			static auto ret = new std::map<const void*, HookChain>();
+			return *ret;
+		}
+
+		WEAK static inline auto& all_frames() {
+			static auto ret = new std::map<const void*, CallFrame>();
+			return *ret;
+		}
 
 	private:
 		/* these don't check char buffer bounds. it should have sizeof(trap) size.
