@@ -2,6 +2,7 @@
 #define __LILAC_HOOK_HPP__
 
 #include "lilac_hook.h"
+#include <cstddef>
 
 namespace lilac {
 	using HookHandle = LilacHookHandle;
@@ -33,6 +34,11 @@ namespace lilac {
 		*/
 		static bool LILAC_CALL remove(HookHandle handle);
 	};
+
+    class Memory {
+    public:
+        static void write(void* to, const void* from, size_t size);
+    };
 }
 
 #endif /* __LILAC_HOOK_HPP__ */

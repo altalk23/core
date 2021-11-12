@@ -4,6 +4,10 @@
 
 using namespace lilac;
 
+void LILAC_CALL Memory::write(void* to, const void* from, size_t size) {
+    return lilac::impl::TargetPlatform::write_memory(to, from, size);
+}
+
 HookHandle LILAC_CALL Hooks::add(const void* address, const void* detour) {
 	return impl::HookManager::add_hook(address, detour);
 }
