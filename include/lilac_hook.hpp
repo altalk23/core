@@ -37,7 +37,7 @@ namespace lilac {
 
     class Memory {
     public:
-        static void write(void* to, const void* from, size_t size);
+        static void LILAC_CALL write(void* to, const void* from, size_t size);
     };
 }
 

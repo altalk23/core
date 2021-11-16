@@ -14,10 +14,10 @@ typedef _Bool bool;
 #if defined(_WIN32)
 	// idk maybe clean platform stuff more
 	#define LILAC_CALL __stdcall
-	#define WEAK __stdcall __declspec(weak)
+    #define VISIBLE __declspec(dllexport)
 #elif defined(__APPLE__)
 	#define LILAC_CALL 
-	#define WEAK __attribute__((weak))
+    #define VISIBLE __attribute__((visibility("default")))
 #else
 	// everything else is unsupported rn LOL
 	#error Currently unsupported platform.
