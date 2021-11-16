@@ -35,10 +35,10 @@ namespace lilac {
 		static bool LILAC_CALL remove(HookHandle handle);
 	};
 
-    class Memory {
-    public:
-        static void LILAC_CALL write(void* to, const void* from, size_t size);
-    };
+	class Memory {
+	public:
+		static void LILAC_CALL write(void* to, const void* from, size_t size);
+	};
 }
 
 #endif /* __LILAC_HOOK_HPP__ */

@@ -24,17 +24,17 @@ namespace lilac::impl {
 			return T::write_memory(to, from, size);
 		}
 
-        VISIBLE static inline auto& initialized() {
-            static auto ret = new bool(false);
-            return *ret;
-        }
+		VISIBLE static inline auto& initialized() {
+			static auto ret = new bool(false);
+			return *ret;
+		}
 
 		static bool initialize() {
-            if (initialized()) return true;
-            return initialized() = T::initialize();
-        }
+			if (initialized()) return true;
+			return initialized() = T::initialize();
+		}
 
-        static const inline bool init = initialize();
+		static const inline bool init = initialize();
 	};
 
 	struct Exception {
