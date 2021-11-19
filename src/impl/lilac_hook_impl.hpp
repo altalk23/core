@@ -7,7 +7,12 @@
 #if defined(_WIN32)
 	#include "lilac_hook_windows.hpp"
 #elif defined(__APPLE__)
-	#include "lilac_hook_macos.hpp"
+	
+	#if defined(__arm64__)
+		#include "lilac_hook_ios.hpp"
+	#else
+		#include "lilac_hook_macos.hpp"
+	#endif
 #else
 	// everything else is unsupported rn LOL
 	#error Currently unsupported platform.
