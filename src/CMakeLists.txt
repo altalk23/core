@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 3.8)
 
-if(APPLE)
+if ("${CMAKE_SYSTEM_NAME}" STREQUAL "iOS")
+	add_library(LilacHook STATIC
+		"lilac_hook.cpp"
+		"impl/lilac_hook_impl.cpp" 
+		"impl/lilac_hook_ios.cpp")
+elseif(APPLE)
 	add_library(LilacHook STATIC
 		"lilac_hook.cpp"
 		"impl/lilac_hook_impl.cpp" 
