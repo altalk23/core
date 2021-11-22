@@ -14,8 +14,8 @@ namespace {
 	void handler(int signal, siginfo_t* signal_info, void* vcontext) {
 		ucontext_t* context = reinterpret_cast<ucontext_t*>(vcontext);
 
-		const void* ret = *reinterpret_cast<void**>(context->uc_mcontext->__ss.__sp);
-		const void** current = reinterpret_cast<const void**>(&context->uc_mcontext->__ss.__pc);
+		const void* ret = *reinterpret_cast<void**>(context->uc_mcontext->__ss.__opaque_sp);
+		const void** current = const_cast<const void**>(reinterpret_cast<void**>(&context->uc_mcontext->__ss.__opaque_pc));
 
 		Exception exception = {
 			signal_info->si_addr,
