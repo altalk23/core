@@ -1,5 +1,5 @@
-#ifndef __LILAC_HOOK_MACOS_HPP__
-#define __LILAC_HOOK_MACOS_HPP__
+#ifndef __LILAC_HOOK_IOS_HPP__
+#define __LILAC_HOOK_IOS_HPP__
 
 #include "lilac_hook_platform.hpp"
 
@@ -17,4 +17,4 @@ namespace lilac::impl {
 
 }
 
-#endif /* __LILAC_HOOK_MACOS_HPP__ */
+#endif /* __LILAC_HOOK_IOS_HPP__ */

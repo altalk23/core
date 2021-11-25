@@ -15,12 +15,12 @@ typedef _Bool bool;
 	// idk maybe clean platform stuff more
 	#define LILAC_CALL __stdcall
 	#define VISIBLE __declspec(dllexport)
-#elif defined(__APPLE__)
+#else
 	#define LILAC_CALL 
 	#define VISIBLE __attribute__((visibility("default")))
-#else
-	// everything else is unsupported rn LOL
-	#error Currently unsupported platform.
+// #else
+// 	// everything else is unsupported rn LOL
+// 	#error Currently unsupported platform.
 #endif
 
 

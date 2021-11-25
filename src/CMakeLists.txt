@@ -5,6 +5,11 @@ if ("${CMAKE_SYSTEM_NAME}" STREQUAL "iOS")
 		"lilac_hook.cpp"
 		"impl/lilac_hook_impl.cpp" 
 		"impl/lilac_hook_ios.cpp")
+elseif ("${CMAKE_SYSTEM_NAME}" STREQUAL "Android")
+    add_library(LilacHook STATIC
+        "lilac_hook.cpp"
+        "impl/lilac_hook_impl.cpp" 
+        "impl/lilac_hook_android.cpp")
 elseif(APPLE)
 	add_library(LilacHook STATIC
 		"lilac_hook.cpp"

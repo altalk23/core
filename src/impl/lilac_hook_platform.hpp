@@ -24,9 +24,9 @@ namespace lilac::impl {
 			return T::write_memory(to, from, size);
 		}
 
-		VISIBLE static inline auto& initialized() {
-			static auto ret = new bool(false);
-			return *ret;
+	    static inline auto& initialized() {
+			static auto ret = false;
+			return ret;
 		}
 
 		static bool initialize() {

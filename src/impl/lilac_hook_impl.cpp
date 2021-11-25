@@ -111,6 +111,7 @@ bool HookManager::handler(Exception& info) {
 }
 
 HookHandle HookManager::add_hook(const void* address, const void* detour) {
+    auto& dummy = all_frames();
 	auto& hook = all_hooks()[address];
 	
 	auto& detours = hook.detours;

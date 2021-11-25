@@ -43,11 +43,7 @@ bool iOS::initialize() {
 	action.sa_sigaction = &handler;
 	action.sa_flags = SA_SIGINFO;
 
-	#if defined(NDEBUG)
-		int signal = SIGTRAP;
-	#else
-		int signal = SIGILL;
-	#endif
+	int signal = SIGTRAP;
 
 	return sigaction(signal, &action, NULL) < 0;
 }
