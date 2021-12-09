@@ -5,7 +5,7 @@
 using namespace lilac;
 
 void LILAC_CALL Memory::write(void* to, const void* from, size_t size) {
-    return lilac::impl::TargetPlatform::write_memory(to, from, size);
+	return lilac::impl::TargetPlatform::write_memory(to, from, size);
 }
 
 HookHandle LILAC_CALL Hooks::add(const void* address, const void* detour) {

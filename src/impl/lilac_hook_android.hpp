@@ -4,16 +4,16 @@
 #include "lilac_hook_platform.hpp"
 
 namespace lilac::impl {
-    class Android : public Platform<Android> {
-    public:
-        /* Arm Thumb Breakpoint */
-        static constexpr char trap[] = { '\x01', '\xDE'};
-    public:
-        static void write_memory(void* to, const void* from, size_t size);
-        static bool initialize();
-    };
+	class Android : public Platform<Android> {
+	public:
+		/* Arm Thumb Breakpoint */
+		static constexpr char trap[] = { '\x01', '\xDE'};
+	public:
+		static void write_memory(void* to, const void* from, size_t size);
+		static bool initialize();
+	};
 
-    using TargetPlatform = Platform<Android>;
+	using TargetPlatform = Platform<Android>;
 
 
 }

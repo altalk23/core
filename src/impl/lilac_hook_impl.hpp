@@ -9,7 +9,7 @@
 #if defined(_WIN32)
 	#include "lilac_hook_windows.hpp"
 #elif defined(__arm__)
-    #include "lilac_hook_android.hpp"
+	#include "lilac_hook_android.hpp"
 #elif defined(__APPLE__)
 	#if defined(__arm64__)
 		#include "lilac_hook_ios.hpp"
@@ -29,7 +29,7 @@ namespace lilac::impl {
 			const void* address;
 			HookChain* parent;
 			char original_bytes[TargetPlatform::get_trap_size()] = { 0 };
-            CallFrame() : address(nullptr), parent(nullptr) { }
+			CallFrame() : address(nullptr), parent(nullptr) { }
 		};
 
 		struct HookChain {
@@ -37,10 +37,10 @@ namespace lilac::impl {
 			std::vector<const void*> detours;
 			std::vector<CallFrame*> frames;
 			char original_bytes[TargetPlatform::get_trap_size()] = { 0 };
-            HookChain() : address(nullptr), detours(), frames() {
-                detours.reserve(16);
-                frames.reserve(16);
-            }
+			HookChain() : address(nullptr), detours(), frames() {
+				detours.reserve(16);
+				frames.reserve(16);
+			}
 		};
 
 
@@ -52,13 +52,13 @@ namespace lilac::impl {
 
 		static inline auto& all_frames() {
 			static auto ret = std::unordered_map<
-                const void*, 
-                CallFrame, 
-                std::hash<const void*>,
-                std::equal_to<const void*>,
-                lilac_allocator<std::pair<const void* const, CallFrame> > 
-            >();
-            ret.rehash(frame_size);
+				const void*, 
+				CallFrame, 
+				std::hash<const void*>,
+				std::equal_to<const void*>,
+				lilac_allocator<std::pair<const void* const, CallFrame> > 
+			>();
+			ret.rehash(frame_size);
 			return ret;
 		}
 

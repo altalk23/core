@@ -3,6 +3,7 @@
 using namespace lilac;
 using namespace impl;
 
+
 namespace {
 	struct Handle {
 		const void* address;
@@ -13,11 +14,17 @@ namespace {
 void HookManager::add_trap(const void* address, char buffer[]) {
 	void* addr = const_cast<void*>(address);
 
+	// __android_log_print(ANDROID_LOG_DEBUG, "[DEBUG] add hook -- ", "%p", address);
+
 	if (buffer != nullptr) {
 		TargetPlatform::write_memory(buffer, addr, TargetPlatform::get_trap_size());
 	}
 
+	// __android_log_print(ANDROID_LOG_DEBUG, "[DEBUG] add buffer -- ", "%p", address);
+
 	TargetPlatform::write_memory(addr, TargetPlatform::get_trap(), TargetPlatform::get_trap_size());
+
+	// __android_log_print(ANDROID_LOG_DEBUG, "[DEBUG] add trap -- ", "%p", address);
 }
 
 void HookManager::remove_trap(const void* address, char buffer[]) {
@@ -110,8 +117,10 @@ bool HookManager::handler(Exception& info) {
 	return (find_in_hooks(info) || find_in_frames(info));
 }
 
+
 HookHandle HookManager::add_hook(const void* address, const void* detour) {
-    auto& dummy = all_frames();
+	// __android_log_print(ANDROID_LOG_DEBUG, "[DEBUG] add hook -- ", "%p, %p", address, detour);
+	auto& dummy = all_frames();
 	auto& hook = all_hooks()[address];
 	
 	auto& detours = hook.detours;
@@ -125,7 +134,9 @@ HookHandle HookManager::add_hook(const void* address, const void* detour) {
 	else {
 		if (detours.empty()) {
 			// add trap instruction if this is the first detour to be added.
+			// __android_log_print(ANDROID_LOG_DEBUG, "[DEBUG] before -- ", "%p, %p", address, detour);
 			add_trap(address, hook.original_bytes);
+			// __android_log_print(ANDROID_LOG_DEBUG, "[DEBUG] after -- ", "%p, %p", address, detour);
 			hook.address = address;
 		}
 
