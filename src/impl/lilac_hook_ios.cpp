@@ -7,6 +7,10 @@
 #include <signal.h>             /* sigaction            */
 #include <sys/ucontext.h>       /* ucontext_t           */
 
+extern "C" {
+	extern void MSHookMemory(void* dst, const void* src, uintptr_t size);
+}
+
 using namespace lilac;
 using namespace impl;
 
@@ -28,22 +32,62 @@ namespace {
 			ret,
 			*current
 		};
-
 		HookManager::handler(exception);
 	}
 }
 
-void iOS::write_memory(void* to, const void* from, size_t size) {
-	kern_return_t ret;
-	
-	ret = vm_protect(mach_task_self(), (mach_vm_address_t)to, size, FALSE, VM_PROT_COPY | VM_PROT_EXECUTE | VM_PROT_WRITE | VM_PROT_READ);
-	if (ret != KERN_SUCCESS) return;
+void iOS::write_memory(void* dst, const void* data, size_t size) {
+	MSHookMemory(dst, data, size);
+    //return true;
 
-	ret = vm_write(mach_task_self(), (mach_vm_address_t)to, (vm_offset_t)from, (mach_msg_type_number_t)size);
+	/*kern_return_t kret;
+	uintptr_t to_ui = reinterpret_cast<uintptr_t>(to);
+	uintptr_t to_shifted = to_ui & ~PAGE_MASK;
+	int psize = ((to_ui + size - 1) & ~PAGE_MASK) - to_shifted + PAGE_SIZE;
+
+	void* copy = mmap(NULL, psize, PROT_WRITE | PROT_READ, MAP_ANON | MAP_SHARED, -1, 0);
+	if (copy == MAP_FAILED) {
+		caclog("mmap failed!");
+		return;
+	} else caclog("mmap succeeded!");
+
+	if (vm_copy(mach_task_self(), to_shifted, psize, (vm_address_t)copy)) {
+		caclog("vm_copy failed!");
+		return;
+	} else caclog("vm_copy succeeded!");
+
+	//mmap((void*)to_shifted, psize, PROT_NONE, MAP_SHARED | MAP_ANON | MAP_FIXED, -1, 0);
+	//caclog("mmap (no protection) succeeded!");
+
+	memcpy((void*)(reinterpret_cast<uintptr_t>(copy)+(to_ui - to_shifted)), from, size);
+	caclog("memcpy succeeded!");
+
+	mprotect(copy, psize, PROT_READ | PROT_EXEC);
+	caclog("mprotect succeeded!");
+	vm_prot_t a, b;
+	kret = mach_vm_remap(
+		mach_task_self(),
+		(mach_vm_address_t*)&to_shifted,
+		psize,
+		0,
+        VM_FLAGS_OVERWRITE,
+        mach_task_self(),
+        (mach_vm_address_t)copy,
+        TRUE,
+        &a,
+        &b,
+        VM_INHERIT_SHARE
+    );
+    if (kret) {
+    	caclog("remap failed!");
+    	return;
+    } else caclog("remap succeeded!");
+    munmap(copy, psize);
+    caclog("munmap succeeded!");*/
 }
 
 bool iOS::initialize() {
-	volatile int a = init; /* epic bugfixing */
+	volatile int a = init;
 	struct sigaction action;
 	memset(&action, '\0', sizeof(action));
 	action.sa_sigaction = &handler;
@@ -52,4 +96,5 @@ bool iOS::initialize() {
 	int signal = SIGTRAP;
 
 	return sigaction(signal, &action, NULL) < 0;
+	//return true; // im just testing
 }

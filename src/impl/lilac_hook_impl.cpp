@@ -135,9 +135,9 @@ HookHandle HookManager::add_hook(const void* address, const void* detour) {
 		if (detours.empty()) {
 			// add trap instruction if this is the first detour to be added.
 			// __android_log_print(ANDROID_LOG_DEBUG, "[DEBUG] before -- ", "%p, %p", address, detour);
+			hook.address = address;
 			add_trap(address, hook.original_bytes);
 			// __android_log_print(ANDROID_LOG_DEBUG, "[DEBUG] after -- ", "%p, %p", address, detour);
-			hook.address = address;
 		}
 
 		detours.push_back(detour);
