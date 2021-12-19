@@ -10,14 +10,21 @@ namespace {
 		const void* detour;
 	};
 }
+extern void caclog(char const* log);
+
+
+#include <unistd.h>
 
 void HookManager::add_trap(const void* address, char buffer[]) {
 	void* addr = const_cast<void*>(address);
 
 	// __android_log_print(ANDROID_LOG_DEBUG, "[DEBUG] add hook -- ", "%p", address);
-
 	if (buffer != nullptr) {
+		// i swapped these!
+		//sleep(3);
 		TargetPlatform::write_memory(buffer, addr, TargetPlatform::get_trap_size());
+		//sleep(3);
+		//return;
 	}
 
 	// __android_log_print(ANDROID_LOG_DEBUG, "[DEBUG] add buffer -- ", "%p", address);
@@ -32,11 +39,16 @@ void HookManager::remove_trap(const void* address, char buffer[]) {
 }
 
 bool HookManager::find_in_hooks(Exception& info) {
+	//auto a = new int;
+	//remove_trap(info.address, all_hooks().find(info.address)->second.original_bytes);
+	//return reinterpret_cast<uintptr_t>(a) == 0x38463;
+
 	auto pair = all_hooks().find(info.address);
 	if (pair != all_hooks().end()) {
 		auto& hook = pair->second;
 
 		// add a frame hook for cleanup
+		//sleep(1);
 		auto frame_pair = all_frames().find(info.return_address);
 		if (frame_pair != all_frames().end()) {
 			if (frame_pair->second.parent != &hook) {
@@ -62,7 +74,8 @@ bool HookManager::find_in_hooks(Exception& info) {
 		auto& frame = frame_pair->second;
 		frame.parent = &hook;
 		frame.address = info.return_address;
-		
+
+
 		hook.frames.push_back(&frame);
 
 		// redirect to next detour
@@ -72,7 +85,6 @@ bool HookManager::find_in_hooks(Exception& info) {
 		if (hook.frames.size() == hook.detours.size()) {
 			remove_trap(info.address, hook.original_bytes);
 		}
-
 		return true;
 	}
 	else {
