@@ -12,11 +12,9 @@ namespace {
 
 void HookManager::add_trap(const void* address, char buffer[]) {
 	void* addr = const_cast<void*>(TargetPlatform::align_address(address));
-
 	if (buffer != nullptr) {
 		TargetPlatform::write_memory(buffer, addr, TargetPlatform::get_trap_size());
 	}
-
 	TargetPlatform::write_memory(addr, TargetPlatform::get_trap(), TargetPlatform::get_trap_size());
 }
 
@@ -26,6 +24,7 @@ void HookManager::remove_trap(const void* address, char buffer[]) {
 }
 
 bool HookManager::find_in_hooks(Exception& info) {
+
 	auto pair = all_hooks().find(info.address);
 	if (pair != all_hooks().end()) {
 		auto& hook = pair->second;
@@ -56,7 +55,8 @@ bool HookManager::find_in_hooks(Exception& info) {
 		auto& frame = frame_pair->second;
 		frame.parent = &hook;
 		frame.address = info.return_address;
-		
+
+
 		hook.frames.push_back(&frame);
 
 		// redirect to next detour
@@ -66,7 +66,6 @@ bool HookManager::find_in_hooks(Exception& info) {
 		if (hook.frames.size() == hook.detours.size()) {
 			remove_trap(info.address, hook.original_bytes);
 		}
-
 		return true;
 	}
 	else {
