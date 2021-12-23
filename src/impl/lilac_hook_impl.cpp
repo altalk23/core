@@ -3,7 +3,6 @@
 using namespace lilac;
 using namespace impl;
 
-
 namespace {
 	struct Handle {
 		const void* address;
@@ -12,23 +11,18 @@ namespace {
 }
 
 void HookManager::add_trap(const void* address, char buffer[]) {
-	void* addr = const_cast<void*>(address);
-
-	// __android_log_print(ANDROID_LOG_DEBUG, "[DEBUG] add hook -- ", "%p", address);
+	void* addr = const_cast<void*>(TargetPlatform::align_address(address));
 
 	if (buffer != nullptr) {
 		TargetPlatform::write_memory(buffer, addr, TargetPlatform::get_trap_size());
 	}
 
-	// __android_log_print(ANDROID_LOG_DEBUG, "[DEBUG] add buffer -- ", "%p", address);
-
 	TargetPlatform::write_memory(addr, TargetPlatform::get_trap(), TargetPlatform::get_trap_size());
-
-	// __android_log_print(ANDROID_LOG_DEBUG, "[DEBUG] add trap -- ", "%p", address);
 }
 
 void HookManager::remove_trap(const void* address, char buffer[]) {
-	TargetPlatform::write_memory(const_cast<void*>(address), buffer, TargetPlatform::get_trap_size());
+	void* addr = const_cast<void*>(TargetPlatform::align_address(address));
+	TargetPlatform::write_memory(addr, buffer, TargetPlatform::get_trap_size());
 }
 
 bool HookManager::find_in_hooks(Exception& info) {
@@ -109,6 +103,7 @@ bool HookManager::find_in_frames(Exception& info) {
 		return true;
 	}
 	else {
+
 		return false;
 	}
 }
@@ -119,7 +114,6 @@ bool HookManager::handler(Exception& info) {
 
 
 HookHandle HookManager::add_hook(const void* address, const void* detour) {
-	// __android_log_print(ANDROID_LOG_DEBUG, "[DEBUG] add hook -- ", "%p, %p", address, detour);
 	auto& dummy = all_frames();
 	auto& hook = all_hooks()[address];
 	
@@ -134,9 +128,7 @@ HookHandle HookManager::add_hook(const void* address, const void* detour) {
 	else {
 		if (detours.empty()) {
 			// add trap instruction if this is the first detour to be added.
-			// __android_log_print(ANDROID_LOG_DEBUG, "[DEBUG] before -- ", "%p, %p", address, detour);
 			add_trap(address, hook.original_bytes);
-			// __android_log_print(ANDROID_LOG_DEBUG, "[DEBUG] after -- ", "%p, %p", address, detour);
 			hook.address = address;
 		}
 

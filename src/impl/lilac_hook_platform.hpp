@@ -29,6 +29,10 @@ namespace lilac::impl {
 			return ret;
 		}
 
+		static const void* align_address(const void* address) {
+			return T::align_address(address);
+		}
+
 		static bool initialize() {
 			if (initialized()) return true;
 			return initialized() = T::initialize();

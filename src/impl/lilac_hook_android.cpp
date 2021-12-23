@@ -6,21 +6,24 @@
 #include <signal.h>             /* sigaction            */
 #include <sys/ucontext.h>       /* ucontext_t           */
 
-#include <android/log.h>
-
 using namespace lilac;
 using namespace impl;
 
 namespace {
+	template <typename T>
+	T remove_bit0(T ptr) {
+		return (T)((uintptr_t)ptr & -2); 
+	}
+
 	void handler(int signal, siginfo_t* signal_info, void* vcontext) {
 		ucontext_t* context = reinterpret_cast<ucontext_t*>(vcontext);
 
-		const void* ret = *reinterpret_cast<void**>(context->uc_mcontext.arm_sp);
+		const void* ret = reinterpret_cast<void*>(context->uc_mcontext.arm_lr);
 		const void** current = reinterpret_cast<const void**>(&context->uc_mcontext.arm_pc);
 
 		Exception exception = {
-			signal_info->si_addr,
-			ret,
+			remove_bit0(signal_info->si_addr),
+			remove_bit0(ret),
 			*current
 		};
 
@@ -32,23 +35,20 @@ namespace {
 		return (void*)((uintptr_t)ptr & PAGE_MASK);
 	}
 
-	template <typename T>
-	T remove_bit0(T ptr) {
-		return (void*)((uintptr_t)ptr & -2); 
-	}
+	
 }
 
 
 void Android::write_memory(void* to, const void* from, size_t size) {
 	auto to_page = ::get_page(to);
-	// auto from_page = ::get_page(from);
-	__android_log_print(ANDROID_LOG_DEBUG, "[DEBUG] cacao -- ", "idk %p, %p, %d, %p, %p", to, from, size, *(void**)::remove_bit0(to), *(void**)::remove_bit0(from));
-	// if (mprotect(to_page, PAGE_SIZE, PROT_WRITE) < 0) return;
-	__android_log_print(ANDROID_LOG_DEBUG, "[DEBUG] cacao -- ", "prot1");
-	// std::memcpy(::remove_bit0(to), ::remove_bit0(from), size);
-	__android_log_print(ANDROID_LOG_DEBUG, "[DEBUG] cacao -- ", "memcpy");
-	// if (mprotect(to_page, PAGE_SIZE, PROT_EXEC | PROT_READ) < 0) return;
-	__android_log_print(ANDROID_LOG_DEBUG, "[DEBUG] cacao -- ", "prot2");
+
+	mprotect((void *)to_page, PAGE_SIZE, PROT_READ | PROT_WRITE | PROT_EXEC);
+
+	memcpy(::remove_bit0(to), from, size);
+
+	// mprotect((void *)to_page, PAGE_SIZE, PROT_READ | PROT_EXEC);
+
+	__builtin___clear_cache((char*)to, (char*)((size_t)to + size));
 }
 
 bool Android::initialize() {
@@ -61,4 +61,8 @@ bool Android::initialize() {
 	int signal = SIGTRAP;
 
 	return sigaction(signal, &action, NULL) < 0;
+}
+
+const void* Android::align_address(const void* address) {
+	return ::remove_bit0(address);
 }

@@ -16,6 +16,9 @@ namespace lilac::impl {
 	public:
 		static void write_memory(void* to, const void* from, size_t size);
 		static bool initialize();
+		static const void* align_address(const void* address) {
+			return address;
+		}
 	};
 
 	using TargetPlatform = Platform<MacOSX>;

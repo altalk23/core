@@ -9,7 +9,9 @@ void LILAC_CALL Memory::write(void* to, const void* from, size_t size) {
 }
 
 HookHandle LILAC_CALL Hooks::add(const void* address, const void* detour) {
-	return impl::HookManager::add_hook(address, detour);
+	auto align = lilac::impl::TargetPlatform::align_address(address);
+	auto align2 = lilac::impl::TargetPlatform::align_address(detour);
+	return impl::HookManager::add_hook(align, align2);
 }
 
 bool LILAC_CALL Hooks::remove(HookHandle handle) {
@@ -17,7 +19,9 @@ bool LILAC_CALL Hooks::remove(HookHandle handle) {
 }
 
 extern "C" LilacHookHandle LILAC_CALL lilac_add_hook(const void* address, const void* detour) {
-	return impl::HookManager::add_hook(address, detour);
+	auto align = lilac::impl::TargetPlatform::align_address(address);
+	auto align2 = lilac::impl::TargetPlatform::align_address(detour);
+	return impl::HookManager::add_hook(align, align2);
 }
 
 extern "C" bool LILAC_CALL lilac_remove_hook(LilacHookHandle handle) {
